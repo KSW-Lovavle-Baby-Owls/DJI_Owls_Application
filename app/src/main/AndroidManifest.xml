@@ -17,19 +17,14 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBDgLz0WqbZiFtqXIBZMgGTPJXjqVz_GUo" />
+            android:value="AIzaSyCglexqetnZ90pvGM0rHim1PX-N5jSSNYc" />
 
         <activity
             android:name=".TestActivity"
             android:screenOrientation="landscape"
             android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
+
 
         <activity
             android:name=".MissionControlActivity"
