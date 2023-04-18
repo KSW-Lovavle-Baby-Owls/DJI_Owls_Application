@@ -1,7 +1,8 @@
 package com.DJIOwl.djiowl;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 /*
 In the home class, the user will select the UAV he/she wishes to follow
