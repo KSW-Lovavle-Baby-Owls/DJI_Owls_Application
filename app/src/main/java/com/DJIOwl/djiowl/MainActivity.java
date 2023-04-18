@@ -1,7 +1,9 @@
 package com.DJIOwl.djiowl;
 
-import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
 /*
 in this activity, the loading screen will be displayed
 and background connectivity code will be run
