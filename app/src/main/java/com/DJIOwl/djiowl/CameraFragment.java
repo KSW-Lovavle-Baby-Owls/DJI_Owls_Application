@@ -24,6 +24,7 @@ public class CameraFragment extends Fragment {
 
     public CameraFragment() {
         // Required empty public constructor
+        //
     }
 
     /**
