@@ -5,11 +5,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +24,15 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 /*
 This Activity contains 4 fragments:
@@ -40,65 +45,61 @@ There will be a dropdown to pick between manual and autonomous(mission) mode
  */
 public class MissionControlActivity extends AppCompatActivity implements OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback {
+
+    boolean trackDroneG;
+    boolean trackDroneB;
     FragmentTransaction fragmentTransaction;
     private Fragment mFragment;
     private ImageView leftArrowButton;
     private ImageView rightArrowButton;
 
     private GoogleMap mMap;
-    private Marker currentMarker = null;
-
-    private static final String TAG = "googlemap_example";
-    private static final int GPS_ENABLE_REQUEST_CODE = 2001;
-    private static final int UPDATE_INTERVAL_MS = 1000;  // 1s
-    private static final int FASTEST_UPDATE_INTERVAL_MS = 500; // 0.5s
-
-    // To distinguish permission request(onRequestPermissionsResult / ActivityCompat.requestPermission)
-    private static final int PERMISSIONS_REQUEST_CODE = 100;
-    boolean needRequest = false;
-
-    // Defines the permission required to run the app
-    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};  // External Storage
-    Location mCurrentLocatiion;
-    LatLng currentPosition;
-
-
-    private FusedLocationProviderClient mFusedLocationClient;
-    private LocationRequest locationRequest;
-    private Location location;
     SupportMapFragment mapFragment;
+    private Marker currentMarkerG = null;
+    private Marker currentMarkerB = null;
 
-    private View mLayout;  // To use Snackbar, we need View
+    RadioGroup radioGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mission_control);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            if
+            (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        1);
+            }
+        }
+        radioGroup = findViewById(R.id.radioGroup);
+        radioGroup.setVisibility(View.INVISIBLE); // only want to see when on a map fragment
         leftArrowButton = findViewById(R.id.leftArrowButton);
         rightArrowButton = findViewById(R.id.rightArrowButton);
         // first fragment to display
         fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        mFragment = new CameraFragment(); // CreateNewNote is fragment you want to display
+        mFragment = new CameraFragment();
         fragmentTransaction.replace(R.id.fragmentView, mFragment);
         fragmentTransaction.commit();
         leftArrowButton.setVisibility(View.INVISIBLE);
 
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
-                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        locationRequest = new LocationRequest()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL_MS)
-                .setFastestInterval(FASTEST_UPDATE_INTERVAL_MS);
+    }
+    public void onMyDroneClick(View view) {
+        trackDroneG = true;
+        trackDroneB = false;
 
+        // test
+        setGoodDrone(new LatLng(40.4301, -86.9134));
+    }
+    public void onBadDroneClick(View view) {
+        trackDroneG = false;
+        trackDroneB = true;
 
-        LocationSettingsRequest.Builder builder =
-                new LocationSettingsRequest.Builder();
-
-        builder.addLocationRequest(locationRequest);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-
+        // test
+        setBadDrone(new LatLng(40.4318, -86.9103));
     }
     public void leftArrowClick(View view) {
         if (mFragment.getClass() == CameraPlusMapFragment.class) {
@@ -110,12 +111,15 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
                     .replace(R.id.fragmentView, mapFragment)
                     .commit();
             mapFragment.getMapAsync(this);
+            radioGroup.setVisibility(View.VISIBLE);
+            radioGroup.clearCheck();
 
         } else if (mFragment.getClass() == SupportMapFragment.class) {
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
             mFragment = new ControlFragment();
             fragmentTransaction.replace(R.id.fragmentView, mFragment);
             fragmentTransaction.commit();
+            radioGroup.setVisibility(View.INVISIBLE);
 
         } else if (mFragment.getClass() == ControlFragment.class) {
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -142,6 +146,8 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
                     .replace(R.id.fragmentView, mapFragment)
                     .commit();
             mapFragment.getMapAsync(this);
+            radioGroup.setVisibility(View.VISIBLE);
+            radioGroup.clearCheck();
 
         } else if (mFragment.getClass() == SupportMapFragment.class) {
             fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -149,6 +155,7 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
             fragmentTransaction.replace(R.id.fragmentView, mFragment);
             fragmentTransaction.commit();
             rightArrowButton.setVisibility(View.INVISIBLE);
+            radioGroup.setVisibility(View.INVISIBLE);
 
         }
     }
@@ -169,8 +176,16 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
         mMap.setMyLocationEnabled(true);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+        // testing only
+        setGoodDrone(new LatLng(40.4301, -86.9134));
+        setBadDrone(new LatLng(40.4318, -86.9103));
+
         long minTime = 1000; //millisecond
         float minDistance = 0;
+
+        // this location listener is to the device this application is running on only
+        // to follow a different device, we will need a check box or radio button of some sort to
+        // either pick to follow the good drone or enemy drone
         LocationListener listener = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
@@ -182,6 +197,51 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
             }
         };
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,  listener);
+    }
+
+    // This is the method that receives the location of the good drone and moves the marker to it
+    // Update UI through Async task? hard to know without real data. Create custom listener of some sort?
+    public void setGoodDrone(LatLng location) {
+
+        //LatLng DEFAULT_LOCATION = new LatLng(37.56, 126.97);
+        String markerTitle = "Unable to get location information";
+        String markerSnippet = "Check the location permission and GPS";
+
+
+        if (currentMarkerG != null) currentMarkerG.remove();
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(location);
+        markerOptions.title(markerTitle);
+        markerOptions.snippet(markerSnippet);
+        markerOptions.draggable(false);
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        currentMarkerG = mMap.addMarker(markerOptions);
+
+        if (trackDroneG) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(location, 15);
+            mMap.moveCamera(cameraUpdate);
+        }
+
+    }
+    public void setBadDrone(LatLng location) {
+        String markerTitle = "Unable to get location information";
+        String markerSnippet = "Check the location permission and GPS";
+        if (currentMarkerB != null) currentMarkerB.remove();
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(location);
+        markerOptions.title(markerTitle);
+        markerOptions.snippet(markerSnippet);
+        markerOptions.draggable(false);
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        currentMarkerB = mMap.addMarker(markerOptions);
+
+        if (trackDroneB) {
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(location, 15);
+            mMap.moveCamera(cameraUpdate);
+        }
+
     }
 
 }

@@ -8,12 +8,15 @@
 
     <FrameLayout
         android:id="@+id/fragmentView"
-        android:layout_width="528dp"
-        android:layout_height="181dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightArrowButton"
+        app:layout_constraintStart_toEndOf="@+id/leftArrowButton"
         app:layout_constraintTop_toBottomOf="@+id/modeSpinner">
 
     </FrameLayout>
@@ -23,7 +26,7 @@
         android:layout_width="110dp"
         android:layout_height="33dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,23 +34,47 @@
         android:id="@+id/leftArrowButton"
         android:layout_width="45dp"
         android:layout_height="41dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="35dp"
         android:onClick="leftArrowClick"
         android:rotation="-90"
         android:src="@drawable/arrow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/fragmentView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/rightArrowButton"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginEnd="35dp"
         android:onClick="rightArrowClick"
         android:rotation="90"
         android:src="@drawable/arrow"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/fragmentView"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <RadioGroup
+
+        android:id="@+id/radioGroup"
+        android:layout_width="139dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onMyDroneClick"
+            android:text="Follow My Drone" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onBadDroneClick"
+            android:text="Follow " />
+    </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
