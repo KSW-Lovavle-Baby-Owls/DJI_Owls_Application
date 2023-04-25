@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MissionControlActivity">
+    tools:context="com.dji.sdk.djiowl.MissionControlActivity">
 
     <FrameLayout
         android:id="@+id/fragmentView"
