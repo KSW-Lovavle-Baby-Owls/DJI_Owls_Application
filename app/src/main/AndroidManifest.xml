@@ -45,41 +45,31 @@
         <activity
             android:name="com.dji.sdk.djiowl.TestActivity"
             android:screenOrientation="landscape"
-            android:exported="true">
+            android:exported="false">
         </activity>
 
 
         <activity
             android:name="com.dji.sdk.djiowl.MissionControlActivity"
             android:screenOrientation="landscape"
-            android:exported="true" >
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            android:exported="false" >
         </activity>
 
         <activity
             android:name="com.dji.sdk.djiowl.HomeActivity"
             android:screenOrientation="landscape"
-            android:exported="true">
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN" />
-
-                            <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>
+            android:exported="false">
         </activity>
 
         <activity
             android:name="com.dji.sdk.djiowl.MainActivity"
             android:screenOrientation="landscape"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
     </application>
