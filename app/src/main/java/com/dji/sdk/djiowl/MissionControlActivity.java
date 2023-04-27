@@ -8,8 +8,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -43,7 +46,7 @@ Each provide a new view for the user to see and control the drone's path
 There will be a dropdown to pick between manual and autonomous(mission) mode
  */
 public class MissionControlActivity extends AppCompatActivity implements OnMapReadyCallback,
-        ActivityCompat.OnRequestPermissionsResultCallback {
+        ActivityCompat.OnRequestPermissionsResultCallback, AdapterView.OnItemSelectedListener {
 
     boolean trackDroneG;
     boolean trackDroneB;
@@ -84,6 +87,23 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
         fragmentTransaction.commit();
         leftArrowButton.setVisibility(View.INVISIBLE);
 
+        Spinner spinner = findViewById(R.id.modeSpinner);
+        spinner.setOnItemSelectedListener(this);
+        String[] modes = {"Manual", "Auto"};
+        // Create the instance of ArrayAdapter
+        // having the list of courses
+        ArrayAdapter ad
+                = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                modes);
+
+        // set simple layout resource file
+        // for each item of spinner
+        ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Set the ArrayAdapter (ad) data on the
+        // Spinner which binds data to spinner
+        spinner.setAdapter(ad);
 
     }
     public void onMyDroneClick(View view) {
@@ -243,4 +263,13 @@ public class MissionControlActivity extends AppCompatActivity implements OnMapRe
 
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // when Auto or Manual is selected
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }

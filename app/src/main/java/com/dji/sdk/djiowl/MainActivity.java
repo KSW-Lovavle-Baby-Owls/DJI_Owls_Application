@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     public static final String FLAG_CONNECTION_CHANGE = "dji_sdk_connection_change";
     private static BaseProduct mProduct;
-    private Handler mHandler; // TODO instantiate (example code in sample code)
+    private Handler mHandler; // TODO instantiate (example code in sample code)fm
 
     private static final String[] REQUIRED_PERMISSION_LIST = new String[] {
             Manifest.permission.VIBRATE, // Gimbal rotation
@@ -130,8 +130,10 @@ public class MainActivity extends AppCompatActivity {
                                 // TODO commented for now so it doesn't download
                                 DJISDKManager.getInstance().startConnectionToProduct();
 
-//                                // test - open a different activity once registered. Change to home activity when developed
-//                                Intent intent = new Intent(MainActivity.this, MissionControlActivity.class);
+//                                test - open a different activity once registered.
+//                                this is to be able to test without connecting to a drone
+
+//                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
 //                                MainActivity.this.startActivity(intent);
 
 
@@ -154,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.d(TAG, String.format("onProductConnect newProduct:%s", baseProduct));
                             showToast("Product Connected");
                             notifyStatusChange();
+                            // start home activity when product is connected
+//                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                                MainActivity.this.startActivity(intent);
 
                         }
 
